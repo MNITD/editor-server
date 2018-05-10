@@ -1,0 +1,65 @@
+{
+  "name": "editor-server",
+  "version": "1.0.0",
+  "description": "server for site editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require babel-register --require babel-polyfill --exit",
+    "build": "babel src -d dist",
+    "serve": "npm run build && node dist/server.js",
+    "start": "nodemon src/server.js --exec babel-node",
+    "start:trace-sync": "npm run start --trace-sync-io"
+  },
+  "author": "MNITD",
+  "license": "ISC",
+  "devDependencies": {
+    "aglio": "^2.3.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "babel-runtime": "^6.26.0",
+    "debug": "^3.1.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-node": "^6.0.1",
+    "mocha": "^5.0.5",
+    "nodemon": "^1.17.2",
+    "request": "^2.85.0",
+    "winston": "^2.4.1"
+  },
+  "dependencies": {
+    "apollo-server-express": "^1.3.4",
+    "babel-polyfill": "^6.26.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "get-graphql-schema": "^2.1.1",
+    "graphql": "^0.13.2",
+    "graphql-tools": "^2.23.1",
+    "helmet": "^3.12.0",
+    "mocha": "^5.0.5",
+    "mongoose": "^5.0.13",
+    "uuid": "^3.2.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      "docs/*",
+      "public/*"
+    ],
+    "delay": "2500"
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": true,
+      "mongo": true,
+      "mocha": true
+    }
+  }
+}

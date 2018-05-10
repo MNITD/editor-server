@@ -1,0 +1,16 @@
+POST http://localhost:8080/v1/pages
+Content-Type: application/json
+
+{"name": "Test", "tree": "{}"}
+
+###
+
+GET http://localhost:8080/v1/pages
+
+###
+
+PUT http://localhost:8080/v1/pages/5aeafb34b7e99129586c0c4a
+
+{"name": "Test2", "tree": "{}"}
+
+###
