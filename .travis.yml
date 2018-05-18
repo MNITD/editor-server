@@ -1,3 +1,16 @@
 language: node_js
+cache:
+  directories:
+    - node_modules
 node_js:
-  - "10"
+- '10'
+deploy:
+  provider: heroku
+  api_key:
+    secure: KEY
+  app: mnitd-editor
+  on:
+    repo: MNITD/editor-server
+env:
+  global:
+    secure: X2bSaVYfkml6QV/ZPQy7kd6K0lGQ00ffmx/3R8DWh/a/A0FLVKJYEP/mCZdU9Zv6EUNVtfsnN5M0fNBvwrGlPzLzTvZKLZeeP3RS1KFERcgdOBQCvqNU0mf4xESRfuUwSwCGm92AJSgw1xKkk7SR8ZJ9Gjd6G3qE2kPgUMI8nc/X0C6OzUEiBZPNdsG68MIpQLY7XfuvS9czuBo2tPM+fe1RYlm4wv0af6xKj4E9MfZ7GMluAtgtXmJBrVYVH/6uZIUv4GEoIqrCOtXik5iFW9baTgIwA2hHXisFKFdHkTguogDb+Ej1Qmq9g47tvhwJNzhO5glbplor3OU5id0O0N6qgESOQZ3Fd6VroRRGz6cLZLvY+YIyyakhyrfvh686UC2riWKRwirh0ppspK7qH4jtdVxmHwMTeQbqt2PL2ktZcYTxdq8kTw0uE7OKuw0mr1+43l4UlYCn5xVAUBKppeU772Iu7QQ2gZidg3XgYI6FfLAvrRHv8UKDDrEGOEHzUPfW0jm2kcgSB9xLW56MGHL1QBLk8giim4ARLl8VvDhTVGQtNHgCMOc9hYx89WhV+3+8RR01LdAtfXfyRtsNkKDu8CII2vXc+nHvEiWxsiFNwU/FrB4TFBtdoIMJCpk/bTmBX8eWCXRul5zXwgmEtHtYTO8Uv9uT3DO9s+Fbtyg=

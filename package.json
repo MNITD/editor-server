@@ -12,6 +12,10 @@
   },
   "author": "MNITD",
   "license": "ISC",
+  "repository" :
+  { "type" : "git",
+    "url" : "https://github.com/MNITD/editor-server.git"
+  },
   "devDependencies": {
     "aglio": "^2.3.0",
     "babel-cli": "^6.26.0",
