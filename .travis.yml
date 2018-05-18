@@ -4,10 +4,10 @@ cache:
   - node_modules
 node_js:
 - '10'
-deploy:
-  provider: heroku
-  api_key:
-    secure: ef1tKIDfC2/m0hRJhQI3WRFnYNGT8I9VhvXoI30n3bAHG0jwuTp+bLbd5TU32g85TizeR+Ed8wqF/h9tQO9sRqQ1MOVTOmI6Ue0BshJiQ2fV/+4RiRRSXjSowbrIOjYhlOvnZBWEYD6j7ZRtvj+hCHI3UP9W3leyZJFB8Ottv1DR4vuqKj+3Grx92bNCiGt9XXVPInVuZsD/x2cYNAlAxnxMJYynuahieiOTLQ05YD0Ni86Jo8lF325r9GfIkCi2NRP6+bRbA9EALxH/wk4sayFT97cg7f6A56jtg73n4/y4Dpo8HrkT2NVEtAIZXKW/5N3/tQ3EqwnPSJhTz1ny0BLRS/EtksZnfn2ceQerugzwTkRPGzNnP97TBw/HvHllFn8utlQyX+qToCUj4dYmiLtU4/d+bLPhCpUpv0rNjGy8EtrnG1P6/6hkFuQ9wi+TSZUiDhCqMm+TlC1l9TMLt7xwvDYq+eGKUi5QIS+tRUXhCfcSqH6JL9WeKLOCTrhzmNKe8a/tUvPR4ItZWhA7pcwX62BQZJ6jDKix7Uj6/3Zi4FMIAYIR1RcyiTg4H/KNvQpZF1hhcrwI44CZwdOVI3Y5q1NlkgZUGM/dnCcJCqYWam/iejZKOE8UirV5foH1Fku+5Wwa/SKb/X/lj2hGgIvcI0jup1fXpgLcVbnHix8=
-  app: mnitd-editor
-  on:
-    repo: MNITD/editor-server
+#deploy:
+#  provider: heroku
+#  api_key:
+#    secure: ef1tKIDfC2/m0hRJhQI3WRFnYNGT8I9VhvXoI30n3bAHG0jwuTp+bLbd5TU32g85TizeR+Ed8wqF/h9tQO9sRqQ1MOVTOmI6Ue0BshJiQ2fV/+4RiRRSXjSowbrIOjYhlOvnZBWEYD6j7ZRtvj+hCHI3UP9W3leyZJFB8Ottv1DR4vuqKj+3Grx92bNCiGt9XXVPInVuZsD/x2cYNAlAxnxMJYynuahieiOTLQ05YD0Ni86Jo8lF325r9GfIkCi2NRP6+bRbA9EALxH/wk4sayFT97cg7f6A56jtg73n4/y4Dpo8HrkT2NVEtAIZXKW/5N3/tQ3EqwnPSJhTz1ny0BLRS/EtksZnfn2ceQerugzwTkRPGzNnP97TBw/HvHllFn8utlQyX+qToCUj4dYmiLtU4/d+bLPhCpUpv0rNjGy8EtrnG1P6/6hkFuQ9wi+TSZUiDhCqMm+TlC1l9TMLt7xwvDYq+eGKUi5QIS+tRUXhCfcSqH6JL9WeKLOCTrhzmNKe8a/tUvPR4ItZWhA7pcwX62BQZJ6jDKix7Uj6/3Zi4FMIAYIR1RcyiTg4H/KNvQpZF1hhcrwI44CZwdOVI3Y5q1NlkgZUGM/dnCcJCqYWam/iejZKOE8UirV5foH1Fku+5Wwa/SKb/X/lj2hGgIvcI0jup1fXpgLcVbnHix8=
+#  app: mnitd-editor
+#  on:
+#    repo: MNITD/editor-server
