@@ -4,7 +4,7 @@ import Document from '../models/document/document';
 
 
 const router = express.Router();
-router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
 
 /**
@@ -12,18 +12,18 @@ router.use(bodyParser.json());
  *
  * in body
  * @param {String} name - Name of document
- * @param {String} three - Serialized json representation of site tree
+ * @param {String} tree - Serialized json representation of site tree
  * @return {Object} created document
  */
-router.post('/', ({body:{name, tree}}, res) => {
-    if(!name || !tree ) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+router.post('/', ({body: {name, tree}}, res) => {
+    if (!name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
     Document.create({
             name,
             tree,
-            changeDate : Date.now()
+            changeDate: Date.now(),
         },
-        (err, page) => {
-            if (err){
+        (err, {id, name, tree, changeDate}) => {
+            if (err) {
                 res
                     .status(500)
                     .send('There was a problem adding the information to the database.');
@@ -31,26 +31,30 @@ router.post('/', ({body:{name, tree}}, res) => {
             else
                 res
                     .status(200)
-                    .send(page);
+                    .send({id, name, tree, changeDate});
             return res;
         });
 });
 
 /**
- * Get all pages from models
+ * Get all documents from models
  *
  * @return {Array} list of all pages
  */
-router.get('/',  (req, res) => {
-    Document.find({}, (err, pages) => {
+router.get('/', (req, res) => {
+    Document.find({}, (err, documents) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem finding the pages.');
+                .send('There was a problem finding the documents.');
         else
             res
                 .status(200)
-                .send(pages);
+                .send(documents.map(document => {
+                    const {changeDate} = link ? document.published.slice(-1) : document;
+                    const {id, name, link} = document;
+                    return {id, name, link, changeDate}
+                }));
         return res;
     });
 });
@@ -63,67 +67,181 @@ router.get('/',  (req, res) => {
  * @return {Object} finding document
  */
 router.get('/:id', ({params: {id}}, res) => {
-    if(!id) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
-    Document.findById(id, (err, page) => {
+    if (!id) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    Document.findById(id, (err, document) => {
         if (err)
             res
                 .status(500)
                 .send('There was a problem finding the information in database.');
-        else if (!page)
+        else if (!document)
             res
                 .status(404)
                 .send('No document found.');
-        else
+        else {
             res
                 .status(200)
-                .send(page);
+                .send(document);
+        }
         return res;
     });
 });
 
 /**
- * Deletes user from models
+ * Deletes document from models
  *
  * in request
- * @param {String} id - id of user to delete
+ * @param {String} id - id of document to delete
  */
-// router.delete('/:id', (req, res) => {
-//     User.findByIdAndRemove(req.params.id, (err, user) => {
-//         if (err)
-//             res
-//                 .status(500)
-//                 .send('There was a problem deleting the user.');
-//         else
-//             res
-//                 .status(200)
-//                 .send(user);
-//         return res;
-//     });
-// });
+router.delete('/:id', ({params: {id}}, res) => {
+    if (!id) return res.status(406).send('Invalid content');
+    Document.findByIdAndRemove(id, (err, document) => {
+        if (err)
+            res
+                .status(500)
+                .send('There was a problem deleting the user.');
+        else
+            res
+                .status(200)
+                .send(document);
+        return res;
+    });
+});
 
 /**
- * Updates user in models
+ * Updates document in models
  *
  * in request
- * @param {String} id - id of user to update
+ * @param {String} id - id of document to update
  *
  * in body
- * @param {String} name - name of user
- * @param {String} phone - phone number of user
- * @return {Object} new updated user
+ * @param {String} name - name of document
+ * @param {String} tree - Serialized json representation of site tree
+ * @return {Object} new updated document
  */
-// router.put('/:id', (req, res) => {
-//     User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, user) => {
-//         if (err)
-//             res
-//                 .status(500)
-//                 .send('There was a problem updating the user.');
-//         else
-//             res
-//                 .status(200)
-//                 .send(user);
-//         return res;
-//     });
-// });
+router.put('/:id', ({params: {id}, body: {name, tree}}, res) => {
+    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    Document.findByIdAndUpdate(id, {
+        name,
+        tree,
+        changeDate: Date.now()
+    }, {new: true}, (err, document) => {
+        if (err)
+            res
+                .status(500)
+                .send('There was a problem updating the user.');
+        else
+            res
+                .status(200)
+                .send(document);
+        return res;
+    });
+});
+
+/**
+ * Publish document in models
+ *
+ * in request
+ * @param {String} id - id of document to publish
+ *
+ * in body
+ * @param {String} name - name of document
+ * @param {String} tree - Serialized json representation of site tree
+ * @return {Object} new updated document
+ */
+router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
+    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+
+    Document.findById(id, (err, document) => {
+        if (err)
+            res
+                .status(500)
+                .send('There was a problem finding the information in database.');
+        else if (!document)
+            res
+                .status(404)
+                .send('No document found.');
+        else {
+            const newDoc = {
+                saved: document.saved,
+                link: document.link,
+                name: document.name,
+                tree: document.tree,
+                changeDate: document.changeDate,
+                published: [...document.published, {name, tree, changeDate: Date.now()}]
+            };
+            console.log(newDoc);
+            Document.findByIdAndUpdate(id,
+                newDoc,
+                {new: true},
+                (err, document) => {
+                    if (err)
+                        res
+                            .status(500)
+                            .send('There was a problem adding the information to the database.');
+                    else
+                        res
+                            .status(200)
+                            .send(document.published.slice(-1)[0]);
+                    return res;
+                }
+            );
+        }
+        return res;
+    });
+});
+
+/**
+ * Save document in models
+ *
+ * in request
+ * @param {String} id - id of document to save
+ *
+ * in body
+ * @param {String} name - name of document
+ * @param {String} tree - Serialized json representation of site tree
+ * @return {Object} new updated document
+ */
+router.post('/saved/:id', ({params: {id}, body: {name, tree}}, res) => {
+    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+
+    Document.findById(id, (err, document) => {
+        if (err)
+            res
+                .status(500)
+                .send('There was a problem finding the information in database.');
+        else if (!document)
+            res
+                .status(404)
+                .send('No document found.');
+        else {
+            const newDoc = {
+                saved: [...document.saved,{name, tree, changeDate: Date.now()}],
+                link: document.link,
+                name: document.name,
+                tree: document.tree,
+                changeDate: document.changeDate,
+                published: document.published,
+            };
+            Document.findByIdAndUpdate(id,
+                newDoc,
+                {new: true},
+                (err, document) => {
+                    if (err)
+                        res
+                            .status(500)
+                            .send('There was a problem adding the information to the database.');
+                    else
+                        res
+                            .status(200)
+                            .send(document.saved.slice(-1)[0]);
+                    return res;
+                }
+            );
+
+        }
+        return res;
+    });
+});
+
 
 export default router;

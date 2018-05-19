@@ -1,9 +1,17 @@
 import mongoose from 'mongoose';
 
+const NestedDocumentSchema = new mongoose.Schema({
+    name: String,
+    tree:String,
+    changeDate: String
+});
 const DocumentSchema = new mongoose.Schema({
     name: String,//Number
     tree: String,
-    changeDate: String
+    saved:[NestedDocumentSchema],
+    published:[NestedDocumentSchema],
+    changeDate: String,
+    link: String
 });
 
 mongoose.model('Document', DocumentSchema);

@@ -1,16 +1,30 @@
-POST http://localhost:8080/v1/pages
+### Create new document
+
+POST http://localhost:8080/api/documents
 Content-Type: application/json
 
 {"name": "Test", "tree": "{}"}
 
-###
+### Get all documents
 
-GET http://localhost:8080/v1/pages
+GET http://localhost:8080/api/documents
 
-###
+### Get document by id
 
-PUT http://localhost:8080/v1/pages/5aeafb34b7e99129586c0c4a
+GET http://localhost:8080/api/documents/5aff8e8080407025583e0e24
 
-{"name": "Test2", "tree": "{}"}
+### Publish document
+
+POST http://localhost:8080/api/documents/published/5aff8e8080407025583e0e24
+Content-Type: application/json
+
+{"name": "Test3", "tree": "{}"}
+
+### Save document
+
+POST http://localhost:8080/api/documents/saved/5aff8e8080407025583e0e24
+Content-Type: application/json
+
+{"name": "Test4", "tree": "{}"}
 
 ###
