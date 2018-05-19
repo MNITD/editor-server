@@ -2,6 +2,18 @@ const aglio = require('aglio');
 
 
 const blueprint = `
+#POST http://localhost:8080/api/documents
+Content-Type: application/json
+{"name": "Test", "tree": "{}"}
+
+{
+  "id": "5b0017c2d4b48b2318192e3f",
+  "name": "Test",
+  "tree": "{}",
+  "changeDate": "1526732738482"
+}
+
+
 # GET /v1/users 
 + Response 200 (text/plain)
 
