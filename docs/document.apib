@@ -1,0 +1,86 @@
+# Group Documents
+Group of all document-related resources.
+
+## Documents [/api/documents]
+
+### Create new document [POST]
++ Request
+    {"name": "Test", "tree": "{}"}
++ Headers
+    Content-Type: application/json
+
+
++ Response 200 (application/json)
+
+{
+  "id": "5b0017c2d4b48b2318192e3f",
+  "name": "Test",
+  "tree": "{}",
+  "changeDate": "1526732738482"
+}
+
++ Response 406 (text/plain)
+
+Invalid content
+
++ Response 500 (text/plain)
+
+There was a problem adding the information to the database.
+
+### Get all documents [GET]
++ Request
+
++ Response 200 (application/json)
+
+[
+  {
+    "id": "5aff8e8080407025583e0e24",
+    "name": "Test2",
+    "link": null,
+    "changeDate": "1526729525376"
+  },
+  {
+    "id": "5b0017c2d4b48b2318192e3f",
+    "name": "Test",
+    "changeDate": "1526732738482"
+  }
+]
+
++ Response 500 (text/plain)
+
+There was a problem adding the information to the database.
+
+## Document [/api/documents/:id]
+
+### Get document by id [GET]
++ Request
+
++ Response 200 (application/json)
+{
+  "_id": "5aff8e8080407025583e0e24",
+  "name": "Test2",
+  "tree": "{}",
+  "changeDate": "1526729525376",
+  "saved": [
+    {
+      "_id": "5b001675ed58cc241881f4bc",
+      "name": "Test4",
+      "tree": "{}",
+      "changeDate": "1526732405542"
+    }
+  ],
+  "published": [
+    {
+      "_id": "5b0014da9b91e904d83266a5",
+      "name": "Test3",
+      "tree": "{}",
+      "changeDate": "1526731994269"
+    }
+  ],
+  "__v": 0,
+  "link": null
+}
+
++ Response 500 (text/plain)
+
+There was a problem adding the information to the database.

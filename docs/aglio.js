@@ -6,6 +6,7 @@ const blueprint = `
 Content-Type: application/json
 {"name": "Test", "tree": "{}"}
 
++ Response 200 (text/json)
 {
   "id": "5b0017c2d4b48b2318192e3f",
   "name": "Test",
@@ -32,7 +33,7 @@ const options = {
 // });
 
 
-aglio.renderFile('user.apib', 'output.html', options, function (err, warnings) {
+aglio.renderFile('document.apib', 'output.html', options, function (err, warnings) {
     if (err) return console.log(err);
     if (warnings) console.log(warnings);
 });
