@@ -53,7 +53,7 @@ router.get('/', (req, res) => {
                 .send(documents.map(document => {
                     const {changeDate} = link ? document.published.slice(-1) : document;
                     const {id, name, link} = document;
-                    return {id, name, link, changeDate}
+                    return {id, name, link, changeDate};
                 }));
         return res;
     });
