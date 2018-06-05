@@ -16,7 +16,9 @@ router.use(bodyParser.json());
  * @return {Object} created document
  */
 router.post('/', ({body: {name, tree}}, res) => {
-    if (!name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    console.log('new document');
+    if (!name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
+
     Document.create({
             name,
             tree,
@@ -26,7 +28,7 @@ router.post('/', ({body: {name, tree}}, res) => {
             if (err) {
                 res
                     .status(500)
-                    .send('There was a problem adding the information to the database.');
+                    .send({error: 'There was a problem adding the information to the database.'});
             }
             else
                 res
@@ -42,11 +44,12 @@ router.post('/', ({body: {name, tree}}, res) => {
  * @return {Array} list of all pages
  */
 router.get('/', (req, res) => {
+    console.log('get documents');
     Document.find({}, (err, documents) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem finding the documents.');
+                .send({error: 'There was a problem finding the documents.'});
         else
             res
                 .status(200)
@@ -118,21 +121,27 @@ router.delete('/:id', ({params: {id}}, res) => {
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.put('/:id', ({params: {id}, body: {name, tree}}, res) => {
-    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
-    Document.findByIdAndUpdate(id, {
-        name,
-        tree,
-        changeDate: Date.now()
-    }, {new: true}, (err, document) => {
+router.put('/:id', ({params: {id}, body: {tree}}, res) => {
+    if (!id || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
+
+    Document.findById(id, async (err, doc) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem updating the user.');
-        else
+                .send({error: 'There was a problem updating the user.'});
+        else {
+            doc.tree = tree;
+            doc.changeDate = Date.now();
+            const document = await doc.save()
+                .catch(
+                    () => res
+                        .status(500)
+                        .send({error: 'There was a problem updating the user.'})
+                );
             res
                 .status(200)
                 .send(document);
+        }
         return res;
     });
 });
@@ -167,7 +176,7 @@ router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
                 name: document.name,
                 tree: document.tree,
                 changeDate: document.changeDate,
-                published: [...document.published, {name, tree, changeDate: Date.now()}]
+                published: [...document.published, {name, tree, changeDate: Date.now()}],
             };
             console.log(newDoc);
             Document.findByIdAndUpdate(id,
@@ -202,20 +211,20 @@ router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
  * @return {Object} new updated document
  */
 router.post('/saved/:id', ({params: {id}, body: {name, tree}}, res) => {
-    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    if (!id || !name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
     Document.findById(id, (err, document) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem finding the information in database.');
+                .send({error: 'There was a problem finding the information in database.'});
         else if (!document)
             res
                 .status(404)
-                .send('No document found.');
+                .send({error: 'No document found.'});
         else {
             const newDoc = {
-                saved: [...document.saved,{name, tree, changeDate: Date.now()}],
+                saved: [...document.saved, {name, tree, changeDate: Date.now()}],
                 link: document.link,
                 name: document.name,
                 tree: document.tree,
@@ -229,7 +238,7 @@ router.post('/saved/:id', ({params: {id}, body: {name, tree}}, res) => {
                     if (err)
                         res
                             .status(500)
-                            .send('There was a problem adding the information to the database.');
+                            .send({error: 'There was a problem adding the information to the database.'});
                     else
                         res
                             .status(200)

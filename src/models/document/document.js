@@ -14,6 +14,8 @@ const DocumentSchema = new mongoose.Schema({
     link: String
 });
 
+DocumentSchema.set('toJSON', { virtuals: true });
+
 mongoose.model('Document', DocumentSchema);
 
 export default mongoose.model('Document');
