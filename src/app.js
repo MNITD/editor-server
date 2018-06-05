@@ -17,9 +17,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.static(path.join(__dirname+'/../public')));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname+'/../public/index.html'));
-});
+
 app.use('/api', api);
 
 app.post('/register', (req, res) => {
@@ -28,6 +26,10 @@ app.post('/register', (req, res) => {
 
 app.post('/login`', (req, res) => {
 
+});
+
+app.use('/*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/../public/index.html'));
 });
 
 export default app;
