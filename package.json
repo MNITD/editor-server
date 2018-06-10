@@ -39,6 +39,7 @@
   "dependencies": {
     "apollo-server-express": "^1.3.4",
     "babel-polyfill": "^6.26.0",
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
@@ -46,6 +47,7 @@
     "graphql": "^0.13.2",
     "graphql-tools": "^2.23.1",
     "helmet": "^3.12.0",
+    "jsonwebtoken": "^8.2.2",
     "mocha": "^5.0.5",
     "mongoose": "^5.0.13",
     "uuid": "^3.2.1"

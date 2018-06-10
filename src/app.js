@@ -20,14 +20,6 @@ app.use(express.static(path.join(__dirname+'/../public')));
 
 app.use('/api', api);
 
-app.post('/register', (req, res) => {
-
-});
-
-app.post('/login`', (req, res) => {
-
-});
-
 app.use('/*', (req, res) => {
     res.sendFile(path.join(__dirname+'/../public/index.html'));
 });

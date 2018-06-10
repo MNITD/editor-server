@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const NestedDocumentSchema = new mongoose.Schema({
     name: String,
     tree:String,
-    changeDate: String
+    changeDate: String,
 });
 const DocumentSchema = new mongoose.Schema({
     name: String,//Number
@@ -11,7 +11,7 @@ const DocumentSchema = new mongoose.Schema({
     saved:[NestedDocumentSchema],
     published:[NestedDocumentSchema],
     changeDate: String,
-    link: String
+    link: String,
 });
 
 DocumentSchema.set('toJSON', { virtuals: true });
