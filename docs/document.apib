@@ -5,33 +5,36 @@ Group of all document-related resources.
 
 ### Create new document [POST]
 + Request
-    {"name": "Test", "tree": "{}"}
+    {"name": "Test", "tree": "[]"}
 + Headers
     Content-Type: application/json
-
+    Authorization: Bearer <token>
 
 + Response 200 (application/json)
-
 {
   "id": "5b0017c2d4b48b2318192e3f",
   "name": "Test",
-  "tree": "{}",
+  "tree": "[]",
   "changeDate": "1526732738482"
 }
 
-+ Response 406 (text/plain)
++ Response 401 (application/json)
+{"error": "Not authenticated"}
 
-Invalid content
++ Response 406 (application/json)
+{"error": "Invalid content"}
 
-+ Response 500 (text/plain)
++ Response 500 (application/json)
+{"error": "There was a problem adding the information to the database."}
 
-There was a problem adding the information to the database.
+
 
 ### Get all documents [GET]
 + Request
++ Headers
+    Authorization: Bearer <token>
 
 + Response 200 (application/json)
-
 [
   {
     "id": "5aff8e8080407025583e0e24",
@@ -46,14 +49,20 @@ There was a problem adding the information to the database.
   }
 ]
 
-+ Response 500 (text/plain)
++ Response 401 (application/json)
+{"error": "Not authenticated"}
 
-There was a problem adding the information to the database.
++ Response 500 (application/json)
+{"error": "There was a problem finding the documents."}
+
+
 
 ## Document [/api/documents/:id]
 
 ### Get document by id [GET]
 + Request
++ Headers
+    Authorization: Bearer <token>
 
 + Response 200 (application/json)
 {
@@ -65,7 +74,7 @@ There was a problem adding the information to the database.
     {
       "_id": "5b001675ed58cc241881f4bc",
       "name": "Test4",
-      "tree": "{}",
+      "tree": "[]",
       "changeDate": "1526732405542"
     }
   ],
@@ -73,7 +82,7 @@ There was a problem adding the information to the database.
     {
       "_id": "5b0014da9b91e904d83266a5",
       "name": "Test3",
-      "tree": "{}",
+      "tree": "[]",
       "changeDate": "1526731994269"
     }
   ],
@@ -81,6 +90,234 @@ There was a problem adding the information to the database.
   "link": null
 }
 
-+ Response 500 (text/plain)
++ Response 401 (application/json)
+{"error": "Not authenticated"}
 
-There was a problem adding the information to the database.
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "There was a problem finding the information in database."}
+
+
+
+### Delete document by id [DELETE]
++ Request
++ Headers
+    Authorization: Bearer <token>
+
++ Response 200 (application/json)
+{
+  "_id": "5aff8e8080407025583e0e24",
+  "name": "Test2",
+  "tree": "[]",
+  "changeDate": "1526729525376",
+  "saved": [
+    {
+      "_id": "5b001675ed58cc241881f4bc",
+      "name": "Test4",
+      "tree": "[]",
+      "changeDate": "1526732405542"
+    }
+  ],
+  "published": [
+    {
+      "_id": "5b0014da9b91e904d83266a5",
+      "name": "Test3",
+      "tree": "[]",
+      "changeDate": "1526731994269"
+    }
+  ],
+  "__v": 0,
+  "link": null
+}
+
++ Response 401 (application/json)
+{"error": "Not authenticated"}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "There was a problem deleting the document"}
+
+
+
+### Update document by id [PUT]
++ Request
+    {"tree": "[]"}
++ Headers
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
++ Response 200 (application/json)
+{
+  "_id": "5aff8e8080407025583e0e24",
+  "name": "Test2",
+  "tree": "[]",
+  "changeDate": "1526729525376",
+  "saved": [
+    {
+      "_id": "5b001675ed58cc241881f4bc",
+      "name": "Test4",
+      "tree": "[]",
+      "changeDate": "1526732405542"
+    }
+  ],
+  "published": [
+    {
+      "_id": "5b0014da9b91e904d83266a5",
+      "name": "Test3",
+      "tree": "[]",
+      "changeDate": "1526731994269"
+    }
+  ],
+  "__v": 0,
+  "link": null
+}
+
++ Response 401 (application/json)
+{"error": "Not authenticated"}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "There was a problem updating the document."}
+
+
+
+### Publish document in models [POST]
++ Request
+    {"name": "", tree": "[]"}
++ Headers
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
++ Response 200 (application/json)
+{
+  "_id": "5aff8e8080407025583e0e24",
+  "name": "Test2",
+  "tree": "[]",
+  "changeDate": "1526729525376"
+}
+
++ Response 401 (application/json)
+{"error": "Not authenticated"}
+
++ Response 404 (application/json)
+{"error": "No document found."}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "There was a problem adding the information to the database"}
+
+
+
+### Saved document in models [POST]
++ Request
+    {"name": "", tree": "[]"}
++ Headers
+    Content-Type: application/json
+    Authorization: Bearer <token>
+
++ Response 200 (application/json)
+{
+  "_id": "5aff8e8080407025583e0e24",
+  "name": "Test2",
+  "tree": "[]",
+  "changeDate": "1526729525376"
+}
+
++ Response 401 (application/json)
+{"error": "Not authenticated"}
+
++ Response 404 (application/json)
+{"error": "No document found."}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "There was a problem adding the information to the database"}
+
+
+
+
+# Group User
+Group of all user-related resources.
+
+## User [/api/user/:id]
+
+### Delete user by id [DELETE]
++ Request
++ Headers
+    Authorization: Bearer <token>
+
++ Response 200 (application/json)
+{
+  "id": "5aff8e8080407025583e0e24",
+  "login": "Test2",
+}
+
++ Response 401 (application/json)
+{"error": "Not authenticated"}
+
++ Response 500 (application/json)
+{"error": "There was a problem deleting the user."}
+
+
+
+# Group Auth
+Group of all auth-related resources.
+
+## Register [/api/register]
+
+### Register new user [POST]
+
++ Request
+    {"login":"", "password": ""}
++ Headers
+    Content-Type: application/json
+
++ Response 200 (application/json)
+{
+  "id": "5aff8e8080407025583e0e24",
+  "login": "Test2",
+  "token": "fklfkod40rokeerkeirlklekrlk..."
+}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 406 (application/json)
+{"error": "User with such login already exist."}
+
++ Response 500 (application/json)
+{"error": "'There was a problem adding the information to the database."}
+
+
+
+## Login [/api/login]
+
+### Login as a user [POST]
+
++ Request
+    {"login":"", "password": ""}
++ Headers
+    Content-Type: application/json
+
++ Response 200 (application/json)
+{
+  "id": "5aff8e8080407025583e0e24",
+  "login": "Test2",
+  "token": "fklfkod40rokeerkeirlklekrlk..."
+}
+
++ Response 406 (application/json)
+{"error": "Invalid content"}
+
++ Response 500 (application/json)
+{"error": "Login or password is incorrect."}

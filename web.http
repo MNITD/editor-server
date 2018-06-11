@@ -1,30 +1,50 @@
 ### Create new document
 
-POST http://localhost:8080/api/documents
+POST http://localhost:9000/api/documents
 Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
 
 {"name": "Test", "tree": "{}"}
 
 ### Get all documents
 
-GET http://localhost:8080/api/documents
+GET http://localhost:9000/api/documents
 
 ### Get document by id
 
-GET http://localhost:8080/api/documents/5aff8e8080407025583e0e24
+GET http://localhost:9000/api/documents/5aff8e9000407025583e0e24
+Authorization: Bearer {{TOKEN}}
 
 ### Publish document
 
-POST http://localhost:8080/api/documents/published/5aff8e8080407025583e0e24
+POST http://localhost:9000/api/documents/published/5aff8e9000407025583e0e24
 Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
 
 {"name": "Test3", "tree": "{}"}
 
 ### Save document
 
-POST http://localhost:8080/api/documents/saved/5aff8e8080407025583e0e24
+POST http://localhost:9000/api/documents/saved/5aff8e9000407025583e0e24
 Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
 
 {"name": "Test4", "tree": "{}"}
+
+### Register user
+
+POST http://localhost:9000/api/register
+Content-Type: application/json
+
+{"login": "Test2", "password": "1234"}
+
+
+### Login user
+
+POST http://localhost:9000/api/login
+Content-Type: application/json
+
+{"login": "Test", "password": "1234"}
+
 
 ###
