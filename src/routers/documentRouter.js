@@ -1,11 +1,22 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import Document from '../models/document/document';
+import {getUserId} from '../utils/getUserById';
 
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
+
+const checkAuth = async (req) => {
+    const authorization = req.get('Authorization');
+    console.log(authorization);
+    if (authorization) {
+        return getUserId(authorization);
+    }
+    res.status(401).send({error: 'Not authenticated'});
+};
+
 
 /**
  * Crate new document
@@ -15,8 +26,16 @@ router.use(bodyParser.json());
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} created document
  */
-router.post('/', ({body: {name, tree}}, res) => {
-    console.log('new document');
+router.post('/', async (req, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        console.log('catch');
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
+
+    console.log('new document', userId);
+    const {body: {name, tree}} = req;
     if (!name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
     Document.create({
@@ -36,6 +55,7 @@ router.post('/', ({body: {name, tree}}, res) => {
                     .send({id, name, tree, changeDate});
             return res;
         });
+
 });
 
 /**
@@ -136,7 +156,7 @@ router.put('/:id', ({params: {id}, body: {tree}}, res) => {
                 .catch(
                     () => res
                         .status(500)
-                        .send({error: 'There was a problem updating the user.'})
+                        .send({error: 'There was a problem updating the user.'}),
                 );
             res
                 .status(200)
@@ -192,7 +212,7 @@ router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
                             .status(200)
                             .send(document.published.slice(-1)[0]);
                     return res;
-                }
+                },
             );
         }
         return res;
@@ -244,7 +264,7 @@ router.post('/saved/:id', ({params: {id}, body: {name, tree}}, res) => {
                             .status(200)
                             .send(document.saved.slice(-1)[0]);
                     return res;
-                }
+                },
             );
 
         }
