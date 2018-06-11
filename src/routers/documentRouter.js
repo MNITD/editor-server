@@ -10,11 +10,7 @@ router.use(bodyParser.json());
 
 const checkAuth = async (req) => {
     const authorization = req.get('Authorization');
-    console.log(authorization);
-    if (authorization) {
-        return getUserId(authorization);
-    }
-    res.status(401).send({error: 'Not authenticated'});
+    if (authorization) return getUserId(authorization);
 };
 
 
@@ -28,7 +24,6 @@ const checkAuth = async (req) => {
  */
 router.post('/', async (req, res) => {
     const userId = await checkAuth(req, res).catch(() => {
-        console.log('catch');
         res.status(401).send({error: 'Not authenticated'});
     });
     if(!userId) return res;
@@ -63,9 +58,14 @@ router.post('/', async (req, res) => {
  *
  * @return {Array} list of all pages
  */
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     console.log('get documents');
-    Document.find({}, (err, documents) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
+    Document.find({author: userId}, (err, documents) => {
         if (err)
             res
                 .status(500)
@@ -89,7 +89,12 @@ router.get('/', (req, res) => {
  * @param {String} id - id of document
  * @return {Object} finding document
  */
-router.get('/:id', ({params: {id}}, res) => {
+router.get('/:id', async({params: {id}}, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
     if (!id) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
     Document.findById(id, (err, document) => {
         if (err)
@@ -115,7 +120,12 @@ router.get('/:id', ({params: {id}}, res) => {
  * in request
  * @param {String} id - id of document to delete
  */
-router.delete('/:id', ({params: {id}}, res) => {
+router.delete('/:id', async({params: {id}}, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
     if (!id) return res.status(406).send('Invalid content');
     Document.findByIdAndRemove(id, (err, document) => {
         if (err)
@@ -141,7 +151,12 @@ router.delete('/:id', ({params: {id}}, res) => {
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.put('/:id', ({params: {id}, body: {tree}}, res) => {
+router.put('/:id', async({params: {id}, body: {tree}}, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
     if (!id || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
 
     Document.findById(id, async (err, doc) => {
@@ -177,7 +192,12 @@ router.put('/:id', ({params: {id}, body: {tree}}, res) => {
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
+router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
     if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
 
     Document.findById(id, (err, document) => {
@@ -230,7 +250,12 @@ router.post('/published/:id', ({params: {id}, body: {name, tree}}, res) => {
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.post('/saved/:id', ({params: {id}, body: {name, tree}}, res) => {
+router.post('/saved/:id', async({params: {id}, body: {name, tree}}, res) => {
+    const userId = await checkAuth(req, res).catch(() => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    if(!userId) return res;
+
     if (!id || !name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
     Document.findById(id, (err, document) => {

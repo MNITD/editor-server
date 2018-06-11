@@ -6,6 +6,7 @@ const NestedDocumentSchema = new mongoose.Schema({
     changeDate: String,
 });
 const DocumentSchema = new mongoose.Schema({
+    author: String,
     name: String,//Number
     tree: String,
     saved:[NestedDocumentSchema],
