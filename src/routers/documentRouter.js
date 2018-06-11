@@ -95,16 +95,16 @@ router.get('/:id', async({params: {id}}, res) => {
     });
     if(!userId) return res;
 
-    if (!id) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    if (!id) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
     Document.findById(id, (err, document) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem finding the information in database.');
+                .send({error: 'There was a problem finding the information in database.'});
         else if (!document)
             res
                 .status(404)
-                .send('No document found.');
+                .send({error: 'No document found.'});
         else {
             res
                 .status(200)
@@ -126,12 +126,12 @@ router.delete('/:id', async({params: {id}}, res) => {
     });
     if(!userId) return res;
 
-    if (!id) return res.status(406).send('Invalid content');
+    if (!id) return res.status(406).send({error: 'Invalid content'});
     Document.findByIdAndRemove(id, (err, document) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem deleting the user.');
+                .send({error: 'There was a problem deleting the document.'});
         else
             res
                 .status(200)
@@ -163,7 +163,7 @@ router.put('/:id', async({params: {id}, body: {tree}}, res) => {
         if (err)
             res
                 .status(500)
-                .send({error: 'There was a problem updating the user.'});
+                .send({error: 'There was a problem updating the document.'});
         else {
             doc.tree = tree;
             doc.changeDate = Date.now();
@@ -171,7 +171,7 @@ router.put('/:id', async({params: {id}, body: {tree}}, res) => {
                 .catch(
                     () => res
                         .status(500)
-                        .send({error: 'There was a problem updating the user.'}),
+                        .send({error: 'There was a problem updating the document.'}),
                 );
             res
                 .status(200)
@@ -198,17 +198,17 @@ router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => 
     });
     if(!userId) return res;
 
-    if (!id || !name || !tree) return res.status(406).send('Invalid content'); // TODO use middleware to validate params
+    if (!id || !name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
     Document.findById(id, (err, document) => {
         if (err)
             res
                 .status(500)
-                .send('There was a problem finding the information in database.');
+                .send({error: 'There was a problem finding the information in database.'});
         else if (!document)
             res
                 .status(404)
-                .send('No document found.');
+                .send({error: 'No document found.'});
         else {
             const newDoc = {
                 saved: document.saved,
@@ -226,11 +226,11 @@ router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => 
                     if (err)
                         res
                             .status(500)
-                            .send('There was a problem adding the information to the database.');
+                            .send({error: 'There was a problem adding the information to the database.'});
                     else
                         res
                             .status(200)
-                            .send(document.published.slice(-1)[0]);
+                            .send({...document.published.slice(-1)[0], id: document.id});
                     return res;
                 },
             );
@@ -287,7 +287,7 @@ router.post('/saved/:id', async({params: {id}, body: {name, tree}}, res) => {
                     else
                         res
                             .status(200)
-                            .send(document.saved.slice(-1)[0]);
+                            .send({...document.saved.slice(-1)[0], id: document.id});
                     return res;
                 },
             );

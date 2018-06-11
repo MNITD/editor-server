@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import {APP_SECRET} from '../utils/app_secret';
 import documentRouter from '../routers/documentRouter';
+import userRouter from '../routers/userRouter';
 import User from '../models/user/user';
 
 const router = express.Router();
@@ -14,6 +15,7 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
 router.use('/documents', documentRouter);
+router.use('/user', userRouter);
 
 
 router.post('/register', ({body: {login, password}}, res) => {
