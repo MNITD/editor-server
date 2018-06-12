@@ -1,5 +1,4 @@
 import assert from 'assert';
-import request from 'request';
 
 import '../src/server'; // start server
 import {makeRequest} from './utils/request';
@@ -20,7 +19,7 @@ describe('Test User API', () => {
 
         assert.deepEqual({login}, {login: expected.login});
 
-        deleteUser(id, token);
+        await deleteUser(id, token);
     });
 
     it(`POST ${testUrl1}/login, should return existed User`, async () => {
@@ -31,7 +30,7 @@ describe('Test User API', () => {
 
         assert.deepEqual({id, login}, {id: body.id, login: body.login});
 
-        deleteUser(id, token);
+        await deleteUser(id, token);
     });
 
     it(`DELETE ${testUrl1}/user/:id, should delete and return Document by id`, async () => {
