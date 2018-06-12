@@ -7,7 +7,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import User from '../models/user/user';
-import {getUserId} from '../../dist/utils/getUserById';
+import {getUserId} from '../utils/getUserById';
 
 
 const router = express.Router();
