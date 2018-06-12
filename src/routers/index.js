@@ -65,13 +65,17 @@ router.post('/login', ({body: {login, password}}, res) => {
         if (err)
             res
                 .status(500)
+                .send({error: 'There was a problem finding the information in the database.'});
+        else if(!user)
+            res
+                .status(406)
                 .send({error: 'Login or password is incorrect.'});
         else {
             const valid = await bcrypt.compare(password, user.password);
 
             if (!valid) {
                 res
-                    .status(500)
+                    .status(406)
                     .send({error: 'Login or password is incorrect.'});
             }
             const token = jwt.sign({userId: user.id}, APP_SECRET);

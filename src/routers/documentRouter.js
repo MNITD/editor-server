@@ -8,9 +8,12 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
 
-const checkAuth = async (req) => {
+const checkAuth = async (req, res) => {
     const authorization = req.get('Authorization');
-    if (authorization) return getUserId(authorization);
+    return getUserId(authorization).catch((err) => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
+    // return null;
 };
 
 
@@ -23,20 +26,20 @@ const checkAuth = async (req) => {
  * @return {Object} created document
  */
 router.post('/', async (req, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
 
+    const userId = await checkAuth(req, res);
 
-    console.log('new document', userId);
+    if (!userId) return res;
+
     const {body: {name, tree}} = req;
+
     if (!name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
     Document.create({
             name,
             tree,
             changeDate: Date.now(),
+            author: userId,
         },
         (err, {id, name, tree, changeDate}) => {
             if (err) {
@@ -59,11 +62,8 @@ router.post('/', async (req, res) => {
  * @return {Array} list of all pages
  */
 router.get('/', async (req, res) => {
-    console.log('get documents');
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
 
     Document.find({author: userId}, (err, documents) => {
         if (err)
@@ -89,11 +89,12 @@ router.get('/', async (req, res) => {
  * @param {String} id - id of document
  * @return {Object} finding document
  */
-router.get('/:id', async({params: {id}}, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+router.get('/:id', async (req, res) => {
+
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
+
+    const {params: {id}} = req;
 
     if (!id) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
     Document.findById(id, (err, document) => {
@@ -119,12 +120,13 @@ router.get('/:id', async({params: {id}}, res) => {
  *
  * in request
  * @param {String} id - id of document to delete
+ * @return {Object} deleted document
  */
-router.delete('/:id', async({params: {id}}, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+router.delete('/:id', async (req, res) => {
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
+
+    const {params: {id}} = req;
 
     if (!id) return res.status(406).send({error: 'Invalid content'});
     Document.findByIdAndRemove(id, (err, document) => {
@@ -151,13 +153,13 @@ router.delete('/:id', async({params: {id}}, res) => {
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.put('/:id', async({params: {id}, body: {tree}}, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+router.put('/:id', async (req, res) => {
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
 
-    if (!id || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
+    const {params: {id}, body: {name, tree}} = req;
+
+    if (!id || !tree || !name) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
 
     Document.findById(id, async (err, doc) => {
         if (err)
@@ -166,6 +168,7 @@ router.put('/:id', async({params: {id}, body: {tree}}, res) => {
                 .send({error: 'There was a problem updating the document.'});
         else {
             doc.tree = tree;
+            doc.name = name;
             doc.changeDate = Date.now();
             const document = await doc.save()
                 .catch(
@@ -190,13 +193,13 @@ router.put('/:id', async({params: {id}, body: {tree}}, res) => {
  * in body
  * @param {String} name - name of document
  * @param {String} tree - Serialized json representation of site tree
- * @return {Object} new updated document
+ * @return {Object} new published document
  */
-router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+router.post('/published/:id', async (req, res) => {
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
+
+    const {params: {id}, body: {name, tree}} = req;
 
     if (!id || !name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
@@ -218,7 +221,7 @@ router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => 
                 changeDate: document.changeDate,
                 published: [...document.published, {name, tree, changeDate: Date.now()}],
             };
-            console.log(newDoc);
+            // console.log(newDoc);
             Document.findByIdAndUpdate(id,
                 newDoc,
                 {new: true},
@@ -227,10 +230,13 @@ router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => 
                         res
                             .status(500)
                             .send({error: 'There was a problem adding the information to the database.'});
-                    else
+                    else {
+                        const {name, tree, changeDate} = document.published.slice(-1)[0];
                         res
                             .status(200)
-                            .send({...document.published.slice(-1)[0], id: document.id});
+                            .send({name, tree, changeDate, id: document.id});
+                    }
+
                     return res;
                 },
             );
@@ -250,11 +256,11 @@ router.post('/published/:id', async({params: {id}, body: {name, tree}}, res) => 
  * @param {String} tree - Serialized json representation of site tree
  * @return {Object} new updated document
  */
-router.post('/saved/:id', async({params: {id}, body: {name, tree}}, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
-    if(!userId) return res;
+router.post('/saved/:id', async (req, res) => {
+    const userId = await checkAuth(req, res);
+    if (!userId) return res;
+
+    const {params: {id}, body: {name, tree}} = req;
 
     if (!id || !name || !tree) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate params
 
@@ -284,10 +290,13 @@ router.post('/saved/:id', async({params: {id}, body: {name, tree}}, res) => {
                         res
                             .status(500)
                             .send({error: 'There was a problem adding the information to the database.'});
-                    else
+                    else {
+                        const {name, tree, changeDate} = document.saved.slice(-1)[0];
                         res
                             .status(200)
-                            .send({...document.saved.slice(-1)[0], id: document.id});
+                            .send({name, tree, changeDate, id: document.id});
+                    }
+
                     return res;
                 },
             );

@@ -14,9 +14,11 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-const checkAuth = async (req) => {
+const checkAuth = async (req, res) => {
     const authorization = req.get('Authorization');
-    if (authorization) return getUserId(authorization);
+    return getUserId(authorization).catch((err) => {
+        res.status(401).send({error: 'Not authenticated'});
+    });
 };
 
 // /**
@@ -101,19 +103,26 @@ const checkAuth = async (req) => {
  * @param {String} id - id of user to delete
  */
 router.delete('/:id', async(req, res) => {
-    const userId = await checkAuth(req, res).catch(() => {
-        res.status(401).send({error: 'Not authenticated'});
-    });
+    const userId = await checkAuth(req, res);
     if(!userId) return res;
-    User.findByIdAndRemove(req.params.id, (err, {id, ligin}) => {
+
+    User.findByIdAndRemove(req.params.id,
+        (err, user) => {
+
         if (err)
             res
                 .status(500)
-                .send('There was a problem deleting the user.');
-        else
+                .send({error: 'There was a problem deleting the user.'});
+        else if(!user)
+            res
+                .status(404)
+                .send({error: 'There is no user with such id.'});
+        else{
+            const {login, id} = user;
             res
                 .status(200)
                 .send({id, login});
+        }
         return res;
     });
 });

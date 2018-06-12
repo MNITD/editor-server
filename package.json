@@ -4,12 +4,13 @@
   "description": "server for site editor",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require babel-register --require babel-polyfill --exit",
+    "test:debug": "cross-env NODE_DEBUG=request cross-env PORT=9000 mocha --require babel-register --require babel-polyfill --exit",
+    "test": "cross-env PORT=9000 mocha --require babel-register --require babel-polyfill --exit",
     "build": "babel src -d dist",
     "serve": "npm run build && node dist/server.js",
     "start": "nodemon src/server.js --exec babel-node",
     "start:trace-sync": "npm run start --trace-sync-io",
-    "docs": "aglio -i document.apib -o output.html"
+    "docs": "node docs/aglio"
   },
   "author": "MNITD",
   "license": "ISC",
@@ -28,6 +29,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.26.0",
     "babel-runtime": "^6.26.0",
+    "cross-env": "^5.1.6",
     "debug": "^3.1.0",
     "eslint": "^4.19.1",
     "eslint-plugin-node": "^6.0.1",
@@ -39,6 +41,7 @@
   "dependencies": {
     "apollo-server-express": "^1.3.4",
     "babel-polyfill": "^6.26.0",
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
