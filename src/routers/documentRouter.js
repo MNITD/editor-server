@@ -10,6 +10,7 @@ router.use(bodyParser.json());
 
 const checkAuth = async (req, res) => {
     const authorization = req.get('Authorization');
+    // console.log('auth', authorization);
     return getUserId(authorization).catch((err) => {
         res.status(401).send({error: 'Not authenticated'});
     });
@@ -159,7 +160,7 @@ router.put('/:id', async (req, res) => {
 
     const {params: {id}, body: {name, tree}} = req;
 
-    if (!id || !tree || !name) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
+    if (!id) return res.status(406).send({error: 'Invalid content'}); // TODO use middleware to validate paramsi        console.log(err);
 
     Document.findById(id, async (err, doc) => {
         if (err)
@@ -167,8 +168,8 @@ router.put('/:id', async (req, res) => {
                 .status(500)
                 .send({error: 'There was a problem updating the document.'});
         else {
-            doc.tree = tree;
-            doc.name = name;
+            if(tree) doc.tree = tree;
+            if(name) doc.name = name;
             doc.changeDate = Date.now();
             const document = await doc.save()
                 .catch(
